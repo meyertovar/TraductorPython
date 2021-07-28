@@ -9,7 +9,7 @@ except ImportError:
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 ima = Image.open("Captura.JPG")
 img_text = pytesseract.image_to_string(ima)
-print(img_text)
+#print(img_text)
 
 p = Translator()
 p_translated = p.translate(img_text, dest='spanish')

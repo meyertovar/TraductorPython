@@ -1,41 +1,73 @@
-
-import PySimpleGUI as sg
-import googletrans
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import scrolledtext
+import tkinter
+import pyttsx3
 from googletrans import Translator
-import threading
-import webbrowser
-translator = Translator()
-
-class traductor:
-    def __init__(self):
-        self.datos_lenguajes = googletrans.LANGUAGES
-        self.frame_de = [
-            [sg.Multiline(default_text='', size=(40, 20), key='-txt_a_traducir_')]
-        ]
-        frame_a = [
-            [sg.Multiline(disabled=True, size=(40, 20), key='-txt_traduccion_')]
-        ]
-        lenguajesA = ['Detectar idioma']
-        lenguajesB = []
-        for lenguaje in self.datos_lenguajes.values():
-            lenguajesA.append(lenguaje)
-            lenguajesB.append(lenguaje)
-        # lenguajes= self.lenguajes.keys()
-        # print(lenguajes)
-        frame_lenguajes = [
-            [sg.Text('De')],
-            [sg.Combo(values=lenguajesA, key='-lenguaje_de-', default_value='Detectar idioma')],
-            [sg.Text('A')],
-            [sg.Combo(values=lenguajesB, key='-lenguaje_a-', default_value='english')],
-            [sg.Button('Traducir', key='-traducir-')]
-        ]
-
-        self.layout_traductor = [[sg.Text('Traductor')],
-                                 [sg.Frame('Texto a traducir', self.frame_de, ), sg.Frame('Lenguajes', frame_lenguajes),
-                                  sg.Frame('Texto Traducido', frame_a)],
-
-                                 ]
 
 
-        self.estado_traduccion = False
-        self.texto_traduccion = ''
+def eraser_text():
+    boxText.delete("0", END)
+    boxText2.delete("0", END)
+
+
+def translate_text():
+    inn = selected.get()
+    if inn != "":
+        if (selectOne.get() == "Español" and (selectTwo.get())) == "Ingles":
+            out = Translator().translate(inn, dest="en")
+            salida.set(out.text)
+        elif (selectOne.get() == "Ingles" and (selectTwo.get())) == "Español":
+            out = Translator().translate(inn, dest="es")
+            salida.set(out.text)
+        elif (selectOne.get() == "Español" and (selectTwo.get())) == "Aleman":
+            out = Translator().translate(inn, dest="de")
+            salida.set(out.text)
+        elif (selectOne.get() == "Aleman" and (selectTwo.get())) == "Español":
+            out = Translator().translate(inn, dest="es")
+            salida.set(out.text)
+        elif (selectOne.get() == "Aleman" and (selectTwo.get())) == "Ingles":
+            out = Translator().translate(inn, dest="en")
+            salida.set(out.text)
+
+
+def talk():
+    voiceEngine = pyttsx3.init()
+    voiceEngine.setProperty("rate", 85)
+    voiceEngine.say(boxText2.get())
+    voiceEngine.runAndWait()
+
+
+root = Tk()
+# modal o ventana del traductor
+root.title("Traductor de texto")
+root.geometry("700x440")
+root.config(relief="ridge", bd="5", bg="gray")
+
+selected = StringVar()
+salida = StringVar()
+
+# combobox #1
+selectOne = Combobox(root, values=["Ingles", "Español", "Aleman"])
+selectOne.place(x=80, y=60)
+selectOne.current(1)
+# combobox #2
+selectTwo = Combobox(root, values=["Ingles", "Español", "Aleman"])
+selectTwo.place(x=450, y=60)
+selectTwo.current(0)
+
+boxText = tkinter.Entry(justify=tkinter.LEFT, textvariable=selected, font=("Times New Roman", 15))
+boxText.grid(column=0, pady=160, padx=65)
+# placing cursor in text area
+boxText.focus()
+# box tex#1
+boxText2 = tkinter.Entry(justify=tkinter.LEFT, textvariable=salida, font=("Times New Roman", 15))
+boxText2.place(x=400, y=150, height=200, width=250)
+
+btn = Button(root, text="Limpiar", command=eraser_text).place(x=300, y=250)
+btnTrad = Button(root, text="Traducir", command=translate_text).place(x=300, y=200)
+
+btnVoi = Button(root, text="Audio", command=talk)
+btnVoi.place(x=500, y=360)
+
+root.mainloop()
